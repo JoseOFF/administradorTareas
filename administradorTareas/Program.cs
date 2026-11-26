@@ -7,37 +7,139 @@
             // permite que la consola muestre caracteres especiales como acentos y Ñ
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            // nombre de la aplicación
-            const string NombreApp = "Administrador de Tareas";
+            const string NombreApp = "Administrador de tareas";
+            const int MaxTareas = 10;
 
-            string version = "0.1";
+            // almacenar las tareas en 3 arreglos direfentes
+            string[] titulos = new string[MaxTareas];
+            int[] prioridad = new int[MaxTareas];
+            bool[] completada = new bool[MaxTareas];
+            int totalTareas = 0;
 
-            Console.WriteLine($"=== {NombreApp} v{version} ===");
-            Console.WriteLine();
+            string[] opcionesMenu = 
+            {
+                "1. Agregar tarea",
+                "2. Listar tareas",
+                "3. Marcar tarea como completada",
+                "0. Salir"
+            };
 
-            // capturar datos
-            Console.Write("Titulo de la tarea: ");
-            string titulo = Console.ReadLine() ?? "";
+            string opcion;
 
-            Console.Write("Prioridad (1.Alta, 2.Media, 3.Baja): ");
-            int prioridad = int.Parse(Console.ReadLine() ?? "");
+            do
+            {
+                Console.Clear();
+                Console.WriteLine($"=== {NombreApp} ===");
+                foreach(string linea in opcionesMenu)
+                {
+                    Console.WriteLine(linea);
+                }
+                Console.WriteLine("Elije una opcion: ");
+                opcion = Console.ReadLine() ?? "";
+                Console.WriteLine();
 
-            Console.WriteLine("Horas estimada (ejemplo: 1.5): ");
-            double horas = double.Parse(Console.ReadLine() ?? "");
+                switch (opcion)
+                {
+                    // Agregar tarea
+                    case "1":
+                        if (totalTareas >= MaxTareas)
+                        {
+                            Console.WriteLine("No hay espacio para poner mas tareas.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Titulo de la tarea: ");
+                            titulos[totalTareas] = Console.ReadLine() ?? "";
 
-            int idTarea = 1;
-            bool completada = false;
+                            Console.WriteLine("Prioridad de la tarea: (1 = Baja, 2 = Media, 3 = Alta)");
+                            prioridad[totalTareas] = int.Parse(Console.ReadLine() ?? "");
 
-            // resumen de la tarea
-            Console.WriteLine();
-            Console.WriteLine("-- Resumen de la tarea --");
-            Console.WriteLine($"ID: {idTarea}");
-            Console.WriteLine($"Titulo: {titulo}");
-            Console.WriteLine($"Prioridad: {prioridad}");
-            Console.WriteLine($"Horas estimadas: {horas}");
-            Console.WriteLine($"Minutos estimadoss: {horas * 60}");
-            Console.WriteLine($"Completado: {completada}");
-            Console.WriteLine($"Caracteres en el titulo: {titulo.Length}")
+                            completada[totalTareas] = false; // Inicialmente la tarea no está completada
+                            totalTareas++;
+                            Console.WriteLine("Tarea agregada correctamente.");
+                        }
+                        break;
+
+                    // Listar tareas
+                    case "2":
+                        if (totalTareas == 0)
+                        {
+                            Console.WriteLine("No hay tareas registradas");
+                            break;
+                        }
+
+                        int hechas = 0;
+                        for (int i = 0; i < totalTareas; i++)
+                        {
+                            string estado = completada[i] ? "[X]" : "[ ]";
+                            string textoPrioridad = prioridad[i] switch
+                            {
+                                1 => "Baja",
+                                2 => "Media",
+                                3 => "Alta",
+                                _ => "Desconocida"
+                            };
+
+                            Console.WriteLine($"{i + 1}. {estado} {titulos[i]} (prioridad: {textoPrioridad})");
+
+                            if (completada[i])
+                            {
+                                hechas++;
+                            }
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine($"Tareas completadas: {hechas} de {totalTareas}");
+                        break;
+
+                    // Marcar tarea como completada
+                    case "3":
+
+                        if (totalTareas == 0)
+                        {
+                            Console.WriteLine("No hay tareas registradas");
+                            break;
+                        }
+
+                        Console.WriteLine($"Numero de tareas (1 - {totalTareas}): ");
+                        int numero = int.Parse(Console.ReadLine() ?? "");
+
+                        if (numero < 1 || numero > totalTareas)
+                        {
+                            Console.WriteLine("Numero fuera del rango");
+                            break;
+                        }
+                        else if (completada[ numero - 1])
+                        {
+                            Console.WriteLine("Esta tarea ya está completada");
+
+                        }
+                        else
+                        {
+                            completada[numero - 1] = true;
+                            Console.WriteLine("Tarea marcada como completada");
+                        }
+                        break;
+
+                    case "0":
+                        Console.WriteLine("Hasta luego!");
+                        break;
+
+                    default:
+                        Console.WriteLine("Opcion no valida");
+                        break;
+
+                }
+
+                if (opcion != "0")
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Presione cualquier tecla para continuar...");
+                    Console.ReadKey(true);
+                }
+
+
+            } while (opcion != "0");
+
         }
     }
 }
